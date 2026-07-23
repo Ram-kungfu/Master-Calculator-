@@ -11,7 +11,7 @@
         }
         h2 { margin: 5px 0 15px 0; color: #38bdf8; text-align: center; font-size: 22px; }
         
-        .container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 350px; }
+        .container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 380px; }
         
         /* नेविगेशन / ड्रॉपडाउन मेनू बॉक्स */
         .selector-box {
@@ -33,19 +33,25 @@
         .box h3 { font-size: 15px; color: #facc15; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-top: 0; display: flex; align-items: center; gap: 5px;}
         
         /* बेसिक कैलकुलेटर */
+        .display-container { position: relative; width: 100%; margin-bottom: 12px; }
         #display {
             width: 100%; height: 50px; background-color: #0f172a; color: #ffffff;
-            font-size: 24px; text-align: right; padding: 10px; box-sizing: border-box;
-            border: none; border-radius: 8px; margin-bottom: 12px;
+            font-size: 24px; text-align: right; padding: 10px 45px 10px 10px; box-sizing: border-box;
+            border: none; border-radius: 8px;
+        }
+        .backspace-btn {
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: #ef4444; font-size: 20px; cursor: pointer; padding: 5px;
         }
         .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .buttons button {
-            padding: 15px; font-size: 18px; cursor: pointer; border: none;
+            padding: 12px 6px; font-size: 16px; cursor: pointer; border: none;
             border-radius: 8px; background-color: #334155; color: white;
         }
         .buttons button:hover { background-color: #475569; }
         .operator { background-color: #3b82f6 !important; }
-        .equal { background-color: #10b981 !important; grid-column: span 2; }
+        .scientific { background-color: #475569 !important; font-size: 14px !important; color: #38bdf8 !important; }
+        .equal { background-color: #10b981 !important; }
         .clear { background-color: #ef4444 !important; }
 
         /* इनपुट और लेआउट */
@@ -61,7 +67,7 @@
             font-size: 13.5px; background-color: #0f172a; padding: 10px;
             border-radius: 6px; margin-top: 5px; color: #4ade80; border-left: 4px solid #4ade80; line-height: 1.4;
         }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
         /* कुल योग (Grand Total) बटन और बॉक्स की स्टाइल */
         .action-row { display: flex; gap: 8px; margin-top: 8px; }
@@ -88,7 +94,7 @@
     <div class="selector-box">
         <label>👇 यहाँ से कैलकुलेटर चुनें:</label>
         <select id="calcSelector" onchange="switchCalculator()">
-            <option value="box-normal">🧮 नॉर्मल कैलकुलेटर</option>
+            <option value="box-normal">🧮 नॉर्मल व साइंटिफिक कैलकुलेटर</option>
             <option value="box-land-area">🌾 खेत/ज़मीन क्षेत्रफल कनवर्टर</option>
             <option value="box-land-price">💰 बीघा/बिस्वा ज़मीन की कीमत</option>
             <option value="box-grocery">🛒 किराना / सामान का हिसाब</option>
@@ -97,18 +103,34 @@
             <option value="box-bank">🏦 बैंक ब्याज (FD / साधारण)</option>
             <option value="box-sip">📈 SIP कैलकुलेटर</option>
             <option value="box-emi">💳 लोन EMI कैलकुलेटर</option>
-            <option value="box-conv">🔄 अन्य ज़रूरी कन्वर्शन</option>
+            <option value="box-conv">🔄 अन्य ज़रूरी कन्वर्शन (एरिया, लेंथ, मास आदि)</option>
         </select>
     </div>
 
-    <!-- ================= 1. बेसिक कैलकुलेटर ================= -->
+    <!-- ================= 1. बेसिक व साइंटिफिक कैलकुलेटर ================= -->
     <div id="box-normal" class="box active">
-        <h3>🧮 नॉर्मल कैलकुलेटर</h3>
-        <input type="text" id="display" readonly value="0">
+        <h3>🧮 नॉर्मल व साइंटिफिक कैलकुलेटर</h3>
+        <div class="display-container">
+            <input type="text" id="display" readonly value="0">
+            <button class="backspace-btn" onclick="deleteLast()" title="एक अंक हटाएं">⌫</button>
+        </div>
         <div class="buttons">
+            <!-- साइंटिफिक रो 1 -->
+            <button class="scientific" onclick="appendSci('sin(')">sin</button>
+            <button class="scientific" onclick="appendSci('cos(')">cos</button>
+            <button class="scientific" onclick="appendSci('tan(')">tan</button>
+            <button class="scientific" onclick="appendSci('Math.sqrt(')">√</button>
+            
+            <!-- साइंटिफिक रो 2 -->
+            <button class="scientific" onclick="appendSci('Math.log(')">ln/log</button>
+            <button class="scientific" onclick="appendSci('Math.pow(')">x^y</button>
+            <button class="scientific" onclick="appendValue('**2')">x²</button>
+            <button class="scientific" onclick="appendValue('Math.PI')">π</button>
+
+            <!-- बेसिक कंट्रोल्स -->
             <button class="clear" onclick="clearDisplay()">C</button>
-            <button onclick="appendValue('(')">(</button>
-            <button onclick="appendValue(')')">)</button>
+            <button onclick="appendBracket()">( )</button>
+            <button class="operator" onclick="appendValue('%')">%</button>
             <button class="operator" onclick="appendValue('/')">÷</button>
             
             <button onclick="appendValue('7')">7</button>
@@ -126,6 +148,7 @@
             <button onclick="appendValue('3')">3</button>
             <button class="operator" onclick="appendValue('+')">+</button>
             
+            <button onclick="toggleSign()">+/-</button>
             <button onclick="appendValue('0')">0</button>
             <button onclick="appendValue('.')">.</button>
             <button class="equal" onclick="calculateResult()">=</button>
@@ -278,27 +301,75 @@
         <div class="result-text" id="resEMI">मासिक EMI: ₹0.00</div>
     </div>
 
-    <!-- ================= 10. अन्य कन्वर्शन ================= -->
+    <!-- ================= 10. अन्य कन्वर्शन (एरिया, लेंथ, टेम्परेचर, वॉल्यूम, मास, डेटा, स्पीड, टाइम, टिप) ================= -->
     <div id="box-conv" class="box">
         <h3>🔄 अन्य ज़रूरी कन्वर्शन</h3>
-        <div class="grid-2">
-            <div>
-                <div class="input-group"><label>🌡️ सेल्सियस (°C):</label><input type="number" id="tempC" placeholder="°C" oninput="calcTemp()"></div>
-                <div class="result-text" id="resTemp">°F</div>
-            </div>
-            <div>
-                <div class="input-group"><label>🛣️ किलोमीटर (Km):</label><input type="number" id="distK" placeholder="Km" oninput="calcDist()"></div>
-                <div class="result-text" id="resDist">मील (Miles)</div>
-            </div>
-            <div>
-                <div class="input-group"><label>⚖️ किलोग्राम (Kg):</label><input type="number" id="wtK" placeholder="Kg" oninput="calcWt()"></div>
-                <div class="result-text" id="resWt">पाउंड (Lbs)</div>
-            </div>
-            <div>
-                <div class="input-group"><label>💾 डेटा (MB):</label><input type="number" id="dataM" placeholder="MB" oninput="calcData()"></div>
-                <div class="result-text" id="resData">जीबी (GB)</div>
+        
+        <!-- 1. Area -->
+        <div class="input-group">
+            <label>🌾 एरिया (वर्ग मीटर से अन्य):</label>
+            <input type="number" id="convArea" placeholder="वर्ग मीटर" oninput="convertArea()">
+        </div>
+        <div class="result-text" id="resConvArea">फीट²: 0 | एकड़: 0</div>
+
+        <!-- 2. Length -->
+        <div class="input-group" style="margin-top:10px;">
+            <label>🛣️ लंबाई (मीटर से अन्य):</label>
+            <input type="number" id="convLen" placeholder="मीटर" oninput="convertLength()">
+        </div>
+        <div class="result-text" id="resConvLen">किलोमीटर: 0 | मील: 0</div>
+
+        <!-- 3. Temperature -->
+        <div class="input-group" style="margin-top:10px;">
+            <label>🌡️ तापमान (°C से °F):</label>
+            <input type="number" id="tempC" placeholder="°C" oninput="calcTemp()">
+        </div>
+        <div class="result-text" id="resTemp">°F: 0</div>
+
+        <!-- 4. Volume -->
+        <div class="input-group" style="margin-top:10px;">
+            <label>🧪 वॉल्यूम (लीटर से मिलीलीटर/गैलन):</label>
+            <input type="number" id="convVol" placeholder="लीटर" oninput="convertVolume()">
+        </div>
+        <div class="result-text" id="resConvVol">मिलीलीटर: 0 | गैलन: 0</div>
+
+        <!-- 5. Mass / Weight -->
+        <div class="input-group" style="margin-top:10px;">
+            <label>⚖️ द्रव्यमान/मास (किलोग्राम):</label>
+            <input type="number" id="wtK" placeholder="Kg" oninput="calcWt()">
+        </div>
+        <div class="result-text" id="resWt">ग्राम: 0 | पाउंड: 0</div>
+
+        <!-- 6. Data -->
+        <div class="input-group" style="margin-top:10px;">
+            <label>💾 डेटा (MB से GB):</label>
+            <input type="number" id="dataM" placeholder="MB" oninput="calcData()">
+        </div>
+        <div class="result-text" id="resData">GB: 0</div>
+
+        <!-- 7. Speed -->
+        <div class="input-group" style="margin-top:10px;">
+            <label>🚀 स्पीड (Km/h से m/s):</label>
+            <input type="number" id="convSpeed" placeholder="Km/h" oninput="convertSpeed()">
+        </div>
+        <div class="result-text" id="resConvSpeed">m/s: 0</div>
+
+        <!-- 8. Time -->
+        <div class="input-group" style="margin-top:10px;">
+            <label>⏱️ समय (घंटे से मिनट/सेकंड):</label>
+            <input type="number" id="convTime" placeholder="घंटे" oninput="convertTime()">
+        </div>
+        <div class="result-text" id="resConvTime">मिनट: 0 | सेकंड: 0</div>
+
+        <!-- 9. Tip Calculator -->
+        <div class="input-group" style="margin-top:10px;">
+            <label>🛎️ टिप कैलकुलेटर (बिल राशि और टिप %):</label>
+            <div class="row">
+                <input type="number" id="tipBill" placeholder="बिल (₹)" oninput="calcTip()">
+                <input type="number" id="tipPct" placeholder="टिप (%)" oninput="calcTip()">
             </div>
         </div>
+        <div class="result-text" id="resTip">टिप: ₹0 | कुल भुगतान: ₹0</div>
     </div>
 
     <!-- क्रेडिट टेक्स्ट -->
@@ -324,11 +395,63 @@
     let currentGroceryVal = 0, totalGroceryVal = 0;
     let currentJewelryVal = 0, totalJewelryVal = 0;
 
-    // 1. बेसिक कैलकुलेटर
+    // 1. बेसिक व साइंटिफिक कैलकुलेटर
     let disp = document.getElementById('display');
-    function appendValue(v) { disp.value = (disp.value === '0') ? v : disp.value + v; }
+    function appendValue(v) { 
+        disp.value = (disp.value === '0' || disp.value === 'Error') ? v : disp.value + v; 
+    }
+    
+    function appendSci(funcStr) {
+        if (disp.value === '0' || disp.value === 'Error') {
+            disp.value = funcStr;
+        } else {
+            disp.value += funcStr;
+        }
+    }
+
     function clearDisplay() { disp.value = '0'; }
-    function calculateResult() { try { disp.value = eval(disp.value); } catch(e) { disp.value = 'Error'; } }
+    
+    function deleteLast() {
+        if (disp.value.length > 1 && disp.value !== 'Error') {
+            disp.value = disp.value.slice(0, -1);
+        } else {
+            disp.value = '0';
+        }
+    }
+    
+    function calculateResult() { 
+        try { 
+            let expr = disp.value.replace(/%/g, '/100');
+            let result = eval(expr);
+            disp.value = result; 
+        } catch(e) { 
+            disp.value = 'Error'; 
+        } 
+    }
+
+    function appendBracket() {
+        let val = disp.value;
+        let openCount = (val.match(/\(/g) || []).length;
+        let closeCount = (val.match(/\)/g) || []).length;
+        if (val === '0' || val === 'Error') {
+            disp.value = '(';
+        } else if (openCount > closeCount && !val.endsWith('(') && !/[+\-*/]$/.test(val)) {
+            disp.value += ')';
+        } else {
+            if (/[0-9]$/.test(val)) disp.value += '*(';
+            else disp.value += '(';
+        }
+    }
+
+    function toggleSign() {
+        if (disp.value !== '0' && disp.value !== 'Error') {
+            if (disp.value.startsWith('-')) {
+                disp.value = disp.value.substring(1);
+            } else {
+                disp.value = '-' + disp.value;
+            }
+        }
+    }
 
     // 2. खेत क्षेत्रफल कनवर्टर
     function calcArea() {
@@ -359,7 +482,7 @@
         else if (rUnit === 'sqm') ratePerBiswa = rate * (2529.3 / 20);
 
         let totalPrice = totalBiswa * ratePerBiswa;
-        currentLandVal = totalPrice; // टोटल में जोड़ने के लिए
+        currentLandVal = totalPrice;
         document.getElementById('resLandPrice').innerHTML = `वर्तमान कीमत: ₹ ${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
     }
     function addLandTotal() {
@@ -381,7 +504,7 @@
         
         let totalWeightInKg = kg + (gm / 1000);
         let totalPrice = ratePerKg * totalWeightInKg;
-        currentGroceryVal = totalPrice; // टोटल में जोड़ने के लिए
+        currentGroceryVal = totalPrice;
         document.getElementById('resGrocery').innerHTML = `वर्तमान सामान: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
     }
     function addGroceryTotal() {
@@ -404,7 +527,7 @@
         let ratePerGram = rate10g / 10;
         let totalWeightInGrams = gm + (mg / 1000);
         let totalPrice = ratePerGram * totalWeightInGrams;
-        currentJewelryVal = totalPrice; // टोटल में जोड़ने के लिए
+        currentJewelryVal = totalPrice;
         document.getElementById('resJewelry').innerHTML = `वर्तमान आभूषण: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
     }
     function addJewelryTotal() {
@@ -481,22 +604,64 @@
         document.getElementById('resEMI').innerHTML = `EMI: ₹${emi.toLocaleString('en-IN', { maximumFractionDigits: 2 })} | कुल: ₹${(emi * mos).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
     }
 
-    // 10. अन्य कन्वर्शन
+    // 10. अन्य कन्वर्शन (Area, Length, Temp, Volume, Mass, Data, Speed, Time, Tip)
+    function convertArea() {
+        let m = parseFloat(document.getElementById('convArea').value) || 0;
+        let ft = m * 10.7639;
+        let acre = m / 4046.86;
+        document.getElementById('resConvArea').innerHTML = `फीट²: ${ft.toFixed(2)} | एकड़: ${acre.toFixed(4)}`;
+    }
+
+    function convertLength() {
+        let meters = parseFloat(document.getElementById('convLen').value) || 0;
+        let km = meters / 1000;
+        let miles = meters / 1609.34;
+        document.getElementById('resConvLen').innerHTML = `किलोमीटर: ${km.toFixed(3)} | मील: ${miles.toFixed(3)}`;
+    }
+
     function calcTemp() {
         let c = parseFloat(document.getElementById('tempC').value) || 0;
-        document.getElementById('resTemp').innerHTML = `${((c * 9/5) + 32).toFixed(2)} °F`;
+        document.getElementById('resTemp').innerHTML = `°F: ${((c * 9/5) + 32).toFixed(2)}`;
     }
-    function calcDist() {
-        let k = parseFloat(document.getElementById('distK').value) || 0;
-        document.getElementById('resDist').innerHTML = `${(k * 0.621371).toFixed(2)} मील`;
+
+    function convertVolume() {
+        let l = parseFloat(document.getElementById('convVol').value) || 0;
+        let ml = l * 1000;
+        let gal = l * 0.264172;
+        document.getElementById('resConvVol').innerHTML = `मिलीलीटर: ${ml.toFixed(2)} | गैलन: ${gal.toFixed(2)}`;
     }
+
     function calcWt() {
         let k = parseFloat(document.getElementById('wtK').value) || 0;
-        document.getElementById('resWt').innerHTML = `${(k * 2.20462).toFixed(2)} पाउंड`;
+        let g = k * 1000;
+        let lb = k * 2.20462;
+        document.getElementById('resWt').innerHTML = `ग्राम: ${g.toFixed(2)} | पाउंड: ${lb.toFixed(2)}`;
     }
+
     function calcData() {
         let m = parseFloat(document.getElementById('dataM').value) || 0;
-        document.getElementById('resData').innerHTML = `${(m / 1024).toFixed(4)} GB`;
+        document.getElementById('resData').innerHTML = `GB: ${(m / 1024).toFixed(4)}`;
+    }
+
+    function convertSpeed() {
+        let kmh = parseFloat(document.getElementById('convSpeed').value) || 0;
+        let ms = kmh * 0.277778;
+        document.getElementById('resConvSpeed').innerHTML = `m/s: ${ms.toFixed(2)}`;
+    }
+
+    function convertTime() {
+        let hrs = parseFloat(document.getElementById('convTime').value) || 0;
+        let mins = hrs * 60;
+        let secs = hrs * 3600;
+        document.getElementById('resConvTime').innerHTML = `मिनट: ${mins.toFixed(0)} | सेकंड: ${secs.toFixed(0)}`;
+    }
+
+    function calcTip() {
+        let bill = parseFloat(document.getElementById('tipBill').value) || 0;
+        let pct = parseFloat(document.getElementById('tipPct').value) || 0;
+        let tipAmount = (bill * pct) / 100;
+        let totalBill = bill + tipAmount;
+        document.getElementById('resTip').innerHTML = `टिप: ₹${tipAmount.toFixed(2)} | कुल भुगतान: ₹${totalBill.toFixed(2)}`;
     }
 </script>
 
