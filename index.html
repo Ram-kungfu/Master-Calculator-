@@ -11,12 +11,25 @@
         }
         h2 { margin: 5px 0 15px 0; color: #38bdf8; text-align: center; font-size: 22px; }
         
-        .container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; max-width: 1050px; }
+        .container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 350px; }
         
+        /* नेविगेशन / ड्रॉपडाउन मेनू बॉक्स */
+        .selector-box {
+            background-color: #1e293b; padding: 12px; border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5); width: 100%; box-sizing: border-box; margin-bottom: 15px;
+        }
+        .selector-box label { display: block; font-size: 13px; margin-bottom: 6px; color: #facc15; font-weight: bold; }
+        .selector-box select {
+            width: 100%; padding: 10px; box-sizing: border-box; background-color: #0f172a;
+            border: 1px solid #3b82f6; color: white; border-radius: 8px; font-size: 15px; cursor: pointer;
+        }
+
+        /* कैलकुलेटर कार्ड बॉक्स */
         .box {
             background-color: #1e293b; padding: 15px; border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5); width: 320px; box-sizing: border-box;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5); width: 100%; box-sizing: border-box; display: none;
         }
+        .box.active { display: block; }
         .box h3 { font-size: 15px; color: #facc15; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-top: 0; display: flex; align-items: center; gap: 5px;}
         
         /* बेसिक कैलकुलेटर */
@@ -62,8 +75,25 @@
 
 <div class="container">
     
+    <!-- ड्रॉपडाउन लिस्ट मेनू -->
+    <div class="selector-box">
+        <label>👇 यहाँ से कैलकुलेटर चुनें:</label>
+        <select id="calcSelector" onchange="switchCalculator()">
+            <option value="box-normal">🧮 नॉर्मल कैलकुलेटर</option>
+            <option value="box-land-area">🌾 खेत/ज़मीन क्षेत्रफल कनवर्टर</option>
+            <option value="box-land-price">💰 बीघा/बिस्वा ज़मीन की कीमत</option>
+            <option value="box-grocery">🛒 किराना / सामान का हिसाब</option>
+            <option value="box-jewelry">💍 सोना / आभूषण का हिसाब</option>
+            <option value="box-usdt">💱 USDT / क्रिप्टो कैलकुलेटर</option>
+            <option value="box-bank">🏦 बैंक ब्याज (FD / साधारण)</option>
+            <option value="box-sip">📈 SIP कैलकुलेटर</option>
+            <option value="box-emi">💳 लोन EMI कैलकुलेटर</option>
+            <option value="box-conv">🔄 अन्य ज़रूरी कन्वर्शन</option>
+        </select>
+    </div>
+
     <!-- ================= 1. बेसिक कैलकुलेटर ================= -->
-    <div class="box">
+    <div id="box-normal" class="box active">
         <h3>🧮 नॉर्मल कैलकुलेटर</h3>
         <input type="text" id="display" readonly value="0">
         <div class="buttons">
@@ -93,15 +123,18 @@
         </div>
     </div>
 
-    <!-- ================= 2. ज़मीन और खेती ================= -->
-    <div class="box">
+    <!-- ================= 2. खेत क्षेत्रफल कनवर्टर ================= -->
+    <div id="box-land-area" class="box">
         <h3>🌾 खेत/ज़मीन क्षेत्रफल कनवर्टर</h3>
         <div class="input-group">
             <label>वर्ग मीटर (Sq Meters) दर्ज करें:</label>
             <input type="number" id="sqM" placeholder="जैसे: 2000" oninput="calcArea()">
         </div>
-        <div class="result-text" id="resArea" style="margin-bottom: 12px;">फीट: 0.00 sq ft<br>एकड़: 0.0000 | हेक्टेयर: 0.0000</div>
+        <div class="result-text" id="resArea">फीट: 0.00 sq ft<br>एकड़: 0.0000 | हेक्टेयर: 0.0000</div>
+    </div>
 
+    <!-- ================= 3. बीघा/बिस्वा ज़मीन की कीमत ================= -->
+    <div id="box-land-price" class="box">
         <h3 style="color: #4ade80;">💰 बीघा/बिस्वा ज़मीन की कीमत</h3>
         <div class="row">
             <div class="input-group">
@@ -124,7 +157,7 @@
                 <input type="number" id="landRate" placeholder="उदा. 5000" oninput="calcLandPrice()">
             </div>
             <div class="input-group">
-                <label>हिساب:</label>
+                <label>हिसाब:</label>
                 <select id="rateUnit" onchange="calcLandPrice()">
                     <option value="bigha">प्रति बीघा</option>
                     <option value="biswa">प्रति बिस्वा</option>
@@ -136,8 +169,8 @@
         <div class="result-text" id="resLandPrice">कुल कीमत: ₹0</div>
     </div>
 
-    <!-- ================= 3. रोज़मर्रा का हिसाब ================= -->
-    <div class="box">
+    <!-- ================= 4. किराना / सामान का हिसाब ================= -->
+    <div id="box-grocery" class="box">
         <h3>🛒 किराना / सामान का हिसाब</h3>
         <div class="input-group">
             <label>1 किलो का दाम (₹):</label>
@@ -147,8 +180,11 @@
             <div class="input-group"><label>किलो (Kg):</label><input type="number" id="gKg" placeholder="किलो" oninput="calcGrocery()"></div>
             <div class="input-group"><label>ग्राम (Grams):</label><input type="number" id="gGm" placeholder="ग्राम" oninput="calcGrocery()"></div>
         </div>
-        <div class="result-text" id="resGrocery" style="margin-bottom: 12px;">सामान की कीमत: ₹0.00</div>
+        <div class="result-text" id="resGrocery">सामान की कीमत: ₹0.00</div>
+    </div>
 
+    <!-- ================= 5. सोना / आभूषण का हिसाब ================= -->
+    <div id="box-jewelry" class="box">
         <h3>💍 सोना / आभूषण का हिसाब</h3>
         <div class="input-group">
             <label>10 ग्राम सोने का रेट (₹):</label>
@@ -161,8 +197,8 @@
         <div class="result-text" id="resJewelry">आभूषण की कीमत: ₹0.00</div>
     </div>
 
-    <!-- ================= 4. USDT / क्रिप्टो कैलकुलेटर (नया जोड़ा गया) ================= -->
-    <div class="box">
+    <!-- ================= 6. USDT / क्रिप्टो कैलकुलेटर ================= -->
+    <div id="box-usdt" class="box">
         <h3>💱 USDT / क्रिप्टो कैलकुलेटर</h3>
         <div class="input-group">
             <label>1 USDT का आज का रेट (₹):</label>
@@ -179,24 +215,30 @@
         <div class="result-text" id="resUSDT">परिणाम यहाँ दिखेगा</div>
     </div>
 
-    <!-- ================= 5. फाइनेंस और बैंक ================= -->
-    <div class="box">
+    <!-- ================= 7. बैंक ब्याज ================= -->
+    <div id="box-bank" class="box">
         <h3>🏦 बैंक ब्याज (FD / साधारण)</h3>
         <div class="row">
             <div class="input-group"><label>मूलधन (₹):</label><input type="number" id="bAmt" oninput="calcBank()"></div>
             <div class="input-group"><label>ब्याज(%):</label><input type="number" id="bRt" oninput="calcBank()"></div>
             <div class="input-group"><label>साल:</label><input type="number" id="bYr" oninput="calcBank()"></div>
         </div>
-        <div class="result-text" id="resBank" style="margin-bottom: 12px;">ब्याज: ₹0 | कुल मिलेगा: ₹0</div>
+        <div class="result-text" id="resBank">ब्याज: ₹0 | कुल मिलेगा: ₹0</div>
+    </div>
 
+    <!-- ================= 8. SIP कैलकुलेटर ================= -->
+    <div id="box-sip" class="box">
         <h3>📈 SIP कैलकुलेटर</h3>
         <div class="row">
             <div class="input-group"><label>मासिक (₹):</label><input type="number" id="sAmt" oninput="calcSIP()"></div>
             <div class="input-group"><label>साल:</label><input type="number" id="sYr" oninput="calcSIP()"></div>
             <div class="input-group"><label>ब्याज(%):</label><input type="number" id="sRt" oninput="calcSIP()"></div>
         </div>
-        <div class="result-text" id="resSIP" style="margin-bottom: 12px;">कुल वैल्यू यहाँ दिखेगी</div>
+        <div class="result-text" id="resSIP">कुल वैल्यू यहाँ दिखेगी</div>
+    </div>
 
+    <!-- ================= 9. लोन EMI कैलकुलेटर ================= -->
+    <div id="box-emi" class="box">
         <h3>💳 लोन EMI कैलकुलेटर</h3>
         <div class="row">
             <div class="input-group"><label>लोन (₹):</label><input type="number" id="lAmt" oninput="calcEMI()"></div>
@@ -206,8 +248,8 @@
         <div class="result-text" id="resEMI">मासिक EMI: ₹0.00</div>
     </div>
 
-    <!-- ================= 6. अन्य कन्वर्शन ================= -->
-    <div class="box">
+    <!-- ================= 10. अन्य कन्वर्शन ================= -->
+    <div id="box-conv" class="box">
         <h3>🔄 अन्य ज़रूरी कन्वर्शन</h3>
         <div class="grid-2">
             <div>
@@ -237,13 +279,23 @@
 </div>
 
 <script>
+    // ड्रॉपडाउन से कैलकुलेटर बदलने का फंक्शन
+    function switchCalculator() {
+        let selectedId = document.getElementById('calcSelector').value;
+        let boxes = document.querySelectorAll('.box');
+        boxes.forEach(box => {
+            box.classList.remove('active');
+        });
+        document.getElementById(selectedId).classList.add('active');
+    }
+
     // 1. बेसिक कैलकुलेटर
     let disp = document.getElementById('display');
     function appendValue(v) { disp.value = (disp.value === '0') ? v : disp.value + v; }
     function clearDisplay() { disp.value = '0'; }
     function calculateResult() { try { disp.value = eval(disp.value); } catch(e) { disp.value = 'Error'; } }
 
-    // 2. खेत/ज़मीन क्षेत्रफल कनवर्टर
+    // 2. खेत क्षेत्रफल कनवर्टर
     function calcArea() {
         let m = parseFloat(document.getElementById('sqM').value) || 0;
         let ft = m * 10.7639;
@@ -298,7 +350,7 @@
         document.getElementById('resJewelry').innerHTML = `आभूषण की कीमत: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
     }
 
-    // 6. USDT / क्रिप्टो कैलकुलेटर (नया फंक्शन)
+    // 6. USDT / क्रिप्टो कैलकुलेटर
     function convertInrToUsdt() {
         let rate = parseFloat(document.getElementById('usdtRate').value) || 0;
         let inr = parseFloat(document.getElementById('calcInrVal').value) || 0;
