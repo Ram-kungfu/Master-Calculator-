@@ -104,6 +104,7 @@
             <option value="box-bank">🏦 बैंक ब्याज (FD / साधारण)</option>
             <option value="box-sip">📈 SIP कैलकुलेटर</option>
             <option value="box-emi">💳 लोन EMI कैलकुलेटर</option>
+            <option value="box-wood-cloth">🪵 लकड़ी, कपड़ा व निर्माण माप (इंच/फीट)</option>
             <option value="box-conv">🔄 अन्य ज़रूरी कन्वर्शन (एरिया, लेंथ, मास आदि)</option>
         </select>
     </div>
@@ -323,6 +324,31 @@
         <div class="result-text" id="resEMI">मासिक EMI: ₹0.00</div>
     </div>
 
+    <!-- ================= NEW. लकड़ी, कपड़ा व निर्माण माप (इंच/फीट) ================= -->
+    <div id="box-wood-cloth" class="box">
+        <h3>🪵 लकड़ी, कपड़ा व निर्माण माप</h3>
+        <div class="row">
+            <div class="input-group"><label>लंबाई (फीट):</label><input type="number" id="wcLengthFt" placeholder="फीट" oninput="calcWoodCloth()"></div>
+            <div class="input-group"><label>लंबाई (इंच):</label><input type="number" id="wcLengthIn" placeholder="इंच" oninput="calcWoodCloth()"></div>
+        </div>
+        <div class="row">
+            <div class="input-group"><label>चौड़ाई/मोटाई (फीट):</label><input type="number" id="wcWidthFt" placeholder="फीट" oninput="calcWoodCloth()"></div>
+            <div class="input-group"><label>चौड़ाई/मोटाई (इंच):</label><input type="number" id="wcWidthIn" placeholder="इंच" oninput="calcWoodCloth()"></div>
+        </div>
+        <div class="input-group">
+            <label>रेट प्रति वर्ग फीट / घन फीट (₹):</label>
+            <input type="number" id="wcRate" placeholder="जैसे: 50" oninput="calcWoodCloth()">
+        </div>
+        <div class="result-text" id="resWoodCloth">कुल क्षेत्रफल/माप: 0 | कुल कीमत: ₹0.00</div>
+        
+        <!-- ग्रांड टोटल बटन -->
+        <div class="action-row">
+            <button class="btn-add" onclick="addWoodClothTotal()">➕ लिस्ट में जोड़ें</button>
+            <button class="btn-clear" onclick="clearWoodClothTotal()">🗑️ रीसेट करें</button>
+        </div>
+        <div class="grand-total" id="gtWoodCloth">कुल योग: ₹0.00</div>
+    </div>
+
     <!-- ================= 10. अन्य कन्वर्शन (एरिया, लेंथ, टेम्परेचर, वॉल्यूम, मास, डेटा, स्पीड, टाइम, टिप) ================= -->
     <div id="box-conv" class="box">
         <h3>🔄 अन्य ज़रूरी कन्वर्शन</h3>
@@ -417,6 +443,7 @@
     let currentGroceryVal = 0, totalGroceryVal = 0;
     let currentLiterVal = 0, totalLiterVal = 0;
     let currentJewelryVal = 0, totalJewelryVal = 0;
+    let currentWoodClothVal = 0, totalWoodClothVal = 0;
 
     // 1. बेसिक व साइंटिफिक कैलकुलेटर
     let disp = document.getElementById('display');
@@ -647,6 +674,33 @@
         let mRate = r / 12 / 100, mos = y * 12;
         let emi = (p * mRate * Math.pow(1 + mRate, mos)) / (Math.pow(1 + mRate, mos) - 1);
         document.getElementById('resEMI').innerHTML = `EMI: ₹${emi.toLocaleString('en-IN', { maximumFractionDigits: 2 })} | कुल: ₹${(emi * mos).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+    }
+
+    // NEW. लकड़ी, कपड़ा व निर्माण माप (इंच/फीट)
+    function calcWoodCloth() {
+        let lFt = parseFloat(document.getElementById('wcLengthFt').value) || 0;
+        let lIn = parseFloat(document.getElementById('wcLengthIn').value) || 0;
+        let wFt = parseFloat(document.getElementById('wcWidthFt').value) || 0;
+        let wIn = parseFloat(document.getElementById('wcWidthIn').value) || 0;
+        let rate = parseFloat(document.getElementById('wcRate').value) || 0;
+
+        let totalLengthInFeet = lFt + (lIn / 12);
+        let totalWidthInFeet = wFt + (wIn / 12);
+        let areaOrVolume = totalLengthInFeet * totalWidthInFeet;
+        let totalPrice = areaOrVolume * rate;
+
+        currentWoodClothVal = totalPrice;
+        document.getElementById('resWoodCloth').innerHTML = `कुल माप: ${areaOrVolume.toFixed(2)} यूनिट | कुल कीमत: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+    }
+    function addWoodClothTotal() {
+        if(currentWoodClothVal > 0) {
+            totalWoodClothVal += currentWoodClothVal;
+            document.getElementById('gtWoodCloth').innerHTML = `कुल योग: ₹${totalWoodClothVal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+        }
+    }
+    function clearWoodClothTotal() {
+        totalWoodClothVal = 0;
+        document.getElementById('gtWoodCloth').innerHTML = `कुल योग: ₹0.00`;
     }
 
     // 10. अन्य कन्वर्शन (Area, Length, Temp, Volume, Mass, Data, Speed, Time, Tip)
