@@ -50,7 +50,10 @@
         }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         
-        .section-title { width: 100%; text-align: center; color: #cbd5e1; font-size: 14px; margin: 20px 0 5px 0; border-bottom: 1px dashed #475569; padding-bottom: 5px;}
+        .footer-credit {
+            margin-top: 25px; color: #94a3b8; font-size: 14px; text-align: center; width: 100%;
+            border-top: 1px dashed #334155; padding-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -92,19 +95,17 @@
 
     <!-- ================= 2. ज़मीन और खेती ================= -->
     <div class="box">
-        <!-- पुराना वाला एरिया कनवर्टर (जो छूट गया था) -->
         <h3>🌾 खेत/ज़मीन क्षेत्रफल कनवर्टर</h3>
         <div class="input-group">
             <label>वर्ग मीटर (Sq Meters) दर्ज करें:</label>
             <input type="number" id="sqM" placeholder="जैसे: 2000" oninput="calcArea()">
         </div>
-        <div class="result-text" id="resArea" style="margin-bottom: 15px;">फीट: 0.00 sq ft<br>एकड़: 0.0000 | हेक्टेयर: 0.0000</div>
+        <div class="result-text" id="resArea" style="margin-bottom: 12px;">फीट: 0.00 sq ft<br>एकड़: 0.0000 | हेक्टेयर: 0.0000</div>
 
-        <!-- बीघा/बिस्वा वाला ऑटोमैटिक दाम कैलकुलेटर -->
-        <h3 style="color: #4ade80;">💰 ज़मीन की कुल कीमत (ऑटोमैटिक)</h3>
+        <h3 style="color: #4ade80;">💰 बीघा/बिस्वा ज़मीन की कीमत</h3>
         <div class="row">
             <div class="input-group">
-                <label>ज़मीन (माप):</label>
+                <label>माप:</label>
                 <input type="number" id="landAmount" placeholder="उदा. 0.36" oninput="calcLandPrice()">
             </div>
             <div class="input-group">
@@ -123,7 +124,7 @@
                 <input type="number" id="landRate" placeholder="उदा. 5000" oninput="calcLandPrice()">
             </div>
             <div class="input-group">
-                <label>रेट का हिसाब:</label>
+                <label>हिساب:</label>
                 <select id="rateUnit" onchange="calcLandPrice()">
                     <option value="bigha">प्रति बीघा</option>
                     <option value="biswa">प्रति बिस्वा</option>
@@ -135,7 +136,7 @@
         <div class="result-text" id="resLandPrice">कुल कीमत: ₹0</div>
     </div>
 
-    <!-- ================= 3. रोज़मर्रा का हिसाब (नया) ================= -->
+    <!-- ================= 3. रोज़मर्रा का हिसाब ================= -->
     <div class="box">
         <h3>🛒 किराना / सामान का हिसाब</h3>
         <div class="input-group">
@@ -143,14 +144,14 @@
             <input type="number" id="gRate" placeholder="जैसे: 150" oninput="calcGrocery()">
         </div>
         <div class="row">
-            <div class="input-group"><label>कितना लिया (Kg):</label><input type="number" id="gKg" placeholder="किलो" oninput="calcGrocery()"></div>
-            <div class="input-group"><label>ग्राम (Grams):</label><input type="number" id="gGm" placeholder="ग्राम (उदा. 250)" oninput="calcGrocery()"></div>
+            <div class="input-group"><label>किलो (Kg):</label><input type="number" id="gKg" placeholder="किलो" oninput="calcGrocery()"></div>
+            <div class="input-group"><label>ग्राम (Grams):</label><input type="number" id="gGm" placeholder="ग्राम" oninput="calcGrocery()"></div>
         </div>
-        <div class="result-text" id="resGrocery" style="margin-bottom: 15px;">सामान की कीमत: ₹0.00</div>
+        <div class="result-text" id="resGrocery" style="margin-bottom: 12px;">सामान की कीमत: ₹0.00</div>
 
         <h3>💍 सोना / आभूषण का हिसाब</h3>
         <div class="input-group">
-            <label>आज का सोने का रेट (प्रति 10 ग्राम):</label>
+            <label>10 ग्राम सोने का रेट (₹):</label>
             <input type="number" id="jRate" placeholder="जैसे: 72000" oninput="calcJewelry()">
         </div>
         <div class="row">
@@ -160,23 +161,41 @@
         <div class="result-text" id="resJewelry">आभूषण की कीमत: ₹0.00</div>
     </div>
 
-    <!-- ================= 4. फाइनेंस और बैंक ================= -->
+    <!-- ================= 4. USDT / क्रिप्टो कैलकुलेटर (नया जोड़ा गया) ================= -->
     <div class="box">
-        <h3>🏦 बैंक ब्याज (साधारण / फिक्स्ड डिपॉजिट)</h3>
+        <h3>💱 USDT / क्रिप्टो कैलकुलेटर</h3>
+        <div class="input-group">
+            <label>1 USDT का आज का रेट (₹):</label>
+            <input type="number" id="usdtRate" placeholder="जैसे: 92.50" oninput="updateUSDTCalc()">
+        </div>
+        <div class="input-group">
+            <label>आपके पास कुल रुपये (₹):</label>
+            <input type="number" id="calcInrVal" placeholder="₹ दर्ज करें" oninput="convertInrToUsdt()">
+        </div>
+        <div class="input-group">
+            <label>या आपके पास कुल USDT:</label>
+            <input type="number" id="calcUsdtVal" placeholder="USDT दर्ज करें" oninput="convertUsdtToInr()">
+        </div>
+        <div class="result-text" id="resUSDT">परिणाम यहाँ दिखेगा</div>
+    </div>
+
+    <!-- ================= 5. फाइनेंस और बैंक ================= -->
+    <div class="box">
+        <h3>🏦 बैंक ब्याज (FD / साधारण)</h3>
         <div class="row">
             <div class="input-group"><label>मूलधन (₹):</label><input type="number" id="bAmt" oninput="calcBank()"></div>
             <div class="input-group"><label>ब्याज(%):</label><input type="number" id="bRt" oninput="calcBank()"></div>
             <div class="input-group"><label>साल:</label><input type="number" id="bYr" oninput="calcBank()"></div>
         </div>
-        <div class="result-text" id="resBank" style="margin-bottom: 15px;">ब्याज: ₹0 | कुल मिलेगा: ₹0</div>
+        <div class="result-text" id="resBank" style="margin-bottom: 12px;">ब्याज: ₹0 | कुल मिलेगा: ₹0</div>
 
-        <h3>📈 SIP कैलकुलेटर (म्यूचुअल फंड)</h3>
+        <h3>📈 SIP कैलकुलेटर</h3>
         <div class="row">
             <div class="input-group"><label>मासिक (₹):</label><input type="number" id="sAmt" oninput="calcSIP()"></div>
             <div class="input-group"><label>साल:</label><input type="number" id="sYr" oninput="calcSIP()"></div>
             <div class="input-group"><label>ब्याज(%):</label><input type="number" id="sRt" oninput="calcSIP()"></div>
         </div>
-        <div class="result-text" id="resSIP" style="margin-bottom: 15px;">कुल वैल्यू यहाँ दिखेगी</div>
+        <div class="result-text" id="resSIP" style="margin-bottom: 12px;">कुल वैल्यू यहाँ दिखेगी</div>
 
         <h3>💳 लोन EMI कैलकुलेटर</h3>
         <div class="row">
@@ -187,7 +206,7 @@
         <div class="result-text" id="resEMI">मासिक EMI: ₹0.00</div>
     </div>
 
-    <!-- ================= 5. अन्य कन्वर्शन ================= -->
+    <!-- ================= 6. अन्य कन्वर्शन ================= -->
     <div class="box">
         <h3>🔄 अन्य ज़रूरी कन्वर्शन</h3>
         <div class="grid-2">
@@ -210,6 +229,11 @@
         </div>
     </div>
 
+    <!-- क्रेडिट टेक्स्ट -->
+    <div class="footer-credit">
+        (Ram Bhai)
+    </div>
+
 </div>
 
 <script>
@@ -219,7 +243,7 @@
     function clearDisplay() { disp.value = '0'; }
     function calculateResult() { try { disp.value = eval(disp.value); } catch(e) { disp.value = 'Error'; } }
 
-    // 2. खेत/ज़मीन क्षेत्रफल कनवर्टर (फोटो वाला)
+    // 2. खेत/ज़मीन क्षेत्रफल कनवर्टर
     function calcArea() {
         let m = parseFloat(document.getElementById('sqM').value) || 0;
         let ft = m * 10.7639;
@@ -235,14 +259,12 @@
         let rate = parseFloat(document.getElementById('landRate').value) || 0;
         let rUnit = document.getElementById('rateUnit').value;
 
-        // सभी ज़मीन को मानक 'बिस्वा' में बदलते हैं (1 बीघा = 20 बिस्वा, 1 हेक्टेयर = 79.06 बिस्वा)
         let totalBiswa = 0;
         if (lUnit === 'biswa') totalBiswa = land;
         else if (lUnit === 'bigha') totalBiswa = land * 20;
         else if (lUnit === 'hectare') totalBiswa = land * 79.06;
         else if (lUnit === 'sqm') totalBiswa = (land / 2529.3) * 20;
 
-        // रेट को प्रति 'बिस्वा' में बदलते हैं
         let ratePerBiswa = 0;
         if (rUnit === 'biswa') ratePerBiswa = rate;
         else if (rUnit === 'bigha') ratePerBiswa = rate / 20;
@@ -253,7 +275,7 @@
         document.getElementById('resLandPrice').innerHTML = `कुल कीमत: ₹ ${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
     }
 
-    // 4. किराना / सामान का हिसाब (नया)
+    // 4. किराना / सामान का हिसाब
     function calcGrocery() {
         let ratePerKg = parseFloat(document.getElementById('gRate').value) || 0;
         let kg = parseFloat(document.getElementById('gKg').value) || 0;
@@ -264,7 +286,7 @@
         document.getElementById('resGrocery').innerHTML = `सामान की कीमत: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
     }
 
-    // 5. सोना / आभूषण का हिसाब (नया)
+    // 5. सोना / आभूषण का हिसाब
     function calcJewelry() {
         let rate10g = parseFloat(document.getElementById('jRate').value) || 0;
         let gm = parseFloat(document.getElementById('jGm').value) || 0;
@@ -276,7 +298,37 @@
         document.getElementById('resJewelry').innerHTML = `आभूषण की कीमत: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
     }
 
-    // 6. बैंक ब्याज (नया)
+    // 6. USDT / क्रिप्टो कैलकुलेटर (नया फंक्शन)
+    function convertInrToUsdt() {
+        let rate = parseFloat(document.getElementById('usdtRate').value) || 0;
+        let inr = parseFloat(document.getElementById('calcInrVal').value) || 0;
+        document.getElementById('calcUsdtVal').value = ''; 
+        if (rate > 0 && inr > 0) {
+            let usdt = inr / rate;
+            document.getElementById('resUSDT').innerHTML = `₹${inr.toLocaleString('en-IN')} में मिलेगा: <b>${usdt.toFixed(4)} USDT</b>`;
+        } else {
+            document.getElementById('resUSDT').innerHTML = `परिणाम यहाँ दिखेगा`;
+        }
+    }
+    function convertUsdtToInr() {
+        let rate = parseFloat(document.getElementById('usdtRate').value) || 0;
+        let usdt = parseFloat(document.getElementById('calcUsdtVal').value) || 0;
+        document.getElementById('calcInrVal').value = ''; 
+        if (rate > 0 && usdt > 0) {
+            let inr = usdt * rate;
+            document.getElementById('resUSDT').innerHTML = `${usdt} USDT की कीमत होगी: <b>₹${inr.toLocaleString('en-IN', {maximumFractionDigits: 2})}</b>`;
+        } else {
+            document.getElementById('resUSDT').innerHTML = `परिणाम यहाँ दिखेगा`;
+        }
+    }
+    function updateUSDTCalc() {
+        let inrField = document.getElementById('calcInrVal').value;
+        let usdtField = document.getElementById('calcUsdtVal').value;
+        if (inrField) convertInrToUsdt();
+        else if (usdtField) convertUsdtToInr();
+    }
+
+    // 7. बैंक ब्याज
     function calcBank() {
         let p = parseFloat(document.getElementById('bAmt').value) || 0;
         let r = parseFloat(document.getElementById('bRt').value) || 0;
@@ -285,7 +337,7 @@
         document.getElementById('resBank').innerHTML = `ब्याज: ₹${interest.toLocaleString('en-IN')} | कुल मिलेगा: ₹${(p + interest).toLocaleString('en-IN')}`;
     }
 
-    // 7. SIP कैलकुलेटर
+    // 8. SIP कैलकुलेटर
     function calcSIP() {
         let p = parseFloat(document.getElementById('sAmt').value) || 0;
         let y = parseFloat(document.getElementById('sYr').value) || 0;
@@ -297,7 +349,7 @@
         document.getElementById('resSIP').innerHTML = `जमा: ₹${(p*m).toLocaleString('en-IN')} | मिलेगा: ₹${fv.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
     }
 
-    // 8. लोन EMI
+    // 9. लोन EMI
     function calcEMI() {
         let p = parseFloat(document.getElementById('lAmt').value) || 0;
         let y = parseFloat(document.getElementById('lYr').value) || 0;
@@ -309,7 +361,7 @@
         document.getElementById('resEMI').innerHTML = `EMI: ₹${emi.toLocaleString('en-IN', { maximumFractionDigits: 2 })} | कुल: ₹${(emi * mos).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
     }
 
-    // 9. अन्य कन्वर्शन
+    // 10. अन्य कन्वर्शन
     function calcTemp() {
         let c = parseFloat(document.getElementById('tempC').value) || 0;
         document.getElementById('resTemp').innerHTML = `${((c * 9/5) + 32).toFixed(2)} °F`;
@@ -330,4 +382,3 @@
 
 </body>
 </html>
-
