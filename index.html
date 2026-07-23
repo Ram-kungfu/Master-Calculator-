@@ -98,6 +98,7 @@
             <option value="box-land-area">🌾 खेत/ज़मीन क्षेत्रफल कनवर्टर</option>
             <option value="box-land-price">💰 बीघा/बिस्वा ज़मीन की कीमत</option>
             <option value="box-grocery">🛒 किराना / सामान का हिसाब</option>
+            <option value="box-liter">⛽ लीटर / तरल पदार्थ का हिसाब</option>
             <option value="box-jewelry">💍 सोना / आभूषण का हिसाब</option>
             <option value="box-usdt">💱 USDT / क्रिप्टो कैलकुलेटर</option>
             <option value="box-bank">🏦 बैंक ब्याज (FD / साधारण)</option>
@@ -227,6 +228,27 @@
             <button class="btn-clear" onclick="clearGroceryTotal()">🗑️ रीसेट करें</button>
         </div>
         <div class="grand-total" id="gtGrocery">🛒 सभी सामान का कुल योग: ₹0.00</div>
+    </div>
+
+    <!-- ================= लीटर / तरल पदार्थ का हिसाब ================= -->
+    <div id="box-liter" class="box">
+        <h3>⛽ लीटर / तरल पदार्थ का हिसाब</h3>
+        <div class="input-group">
+            <label>1 लीटर का दाम (₹):</label>
+            <input type="number" id="lRate" placeholder="जैसे: 60" oninput="calcLiter()">
+        </div>
+        <div class="row">
+            <div class="input-group"><label>लीटर (Liter):</label><input type="number" id="lLiter" placeholder="लीटर" oninput="calcLiter()"></div>
+            <div class="input-group"><label>मिलीलीटर (ML):</label><input type="number" id="lMl" placeholder="मिलीलीटर" oninput="calcLiter()"></div>
+        </div>
+        <div class="result-text" id="resLiter">वर्तमान तरल: ₹0.00</div>
+
+        <!-- ग्रांड टोटल बटन -->
+        <div class="action-row">
+            <button class="btn-add" onclick="addLiterTotal()">➕ लिस्ट में जोड़ें</button>
+            <button class="btn-clear" onclick="clearLiterTotal()">🗑️ रीसेट करें</button>
+        </div>
+        <div class="grand-total" id="gtLiter">⛽ सभी तरल का कुल योग: ₹0.00</div>
     </div>
 
     <!-- ================= 5. सोना / आभूषण का हिसाब ================= -->
@@ -393,6 +415,7 @@
     // ग्रांड टोटल (Grand Total) वेरिएबल्स
     let currentLandVal = 0, totalLandVal = 0;
     let currentGroceryVal = 0, totalGroceryVal = 0;
+    let currentLiterVal = 0, totalLiterVal = 0;
     let currentJewelryVal = 0, totalJewelryVal = 0;
 
     // 1. बेसिक व साइंटिफिक कैलकुलेटर
@@ -516,6 +539,28 @@
     function clearGroceryTotal() {
         totalGroceryVal = 0;
         document.getElementById('gtGrocery').innerHTML = `🛒 सभी सामान का कुल योग: ₹0.00`;
+    }
+
+    // लीटर / तरल पदार्थ का हिसाब
+    function calcLiter() {
+        let ratePerLiter = parseFloat(document.getElementById('lRate').value) || 0;
+        let liter = parseFloat(document.getElementById('lLiter').value) || 0;
+        let ml = parseFloat(document.getElementById('lMl').value) || 0;
+        
+        let totalVolumeInLiter = liter + (ml / 1000);
+        let totalPrice = ratePerLiter * totalVolumeInLiter;
+        currentLiterVal = totalPrice;
+        document.getElementById('resLiter').innerHTML = `वर्तमान तरल: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+    }
+    function addLiterTotal() {
+        if(currentLiterVal > 0) {
+            totalLiterVal += currentLiterVal;
+            document.getElementById('gtLiter').innerHTML = `⛽ सभी तरल का कुल योग: ₹${totalLiterVal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+        }
+    }
+    function clearLiterTotal() {
+        totalLiterVal = 0;
+        document.getElementById('gtLiter').innerHTML = `⛽ सभी तरल का कुल योग: ₹0.00`;
     }
 
     // 5. सोना / आभूषण का हिसाब
