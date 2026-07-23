@@ -62,6 +62,15 @@
             border-radius: 6px; margin-top: 5px; color: #4ade80; border-left: 4px solid #4ade80; line-height: 1.4;
         }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* कुल योग (Grand Total) बटन और बॉक्स की स्टाइल */
+        .action-row { display: flex; gap: 8px; margin-top: 8px; }
+        .btn-add, .btn-clear { flex: 1; padding: 8px; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; color: white; font-weight: bold; }
+        .btn-add { background-color: #3b82f6; } 
+        .btn-add:hover { background-color: #2563eb; }
+        .btn-clear { background-color: #ef4444; } 
+        .btn-clear:hover { background-color: #dc2626; }
+        .grand-total { font-size: 15px; color: #facc15; margin-top: 8px; font-weight: bold; padding: 8px; background-color: #334155; border-radius: 6px; text-align: center; border: 1px dashed #facc15; }
         
         .footer-credit {
             margin-top: 25px; color: #94a3b8; font-size: 14px; text-align: center; width: 100%;
@@ -166,7 +175,14 @@
                 </select>
             </div>
         </div>
-        <div class="result-text" id="resLandPrice">कुल कीमत: ₹0</div>
+        <div class="result-text" id="resLandPrice">वर्तमान कीमत: ₹0</div>
+        
+        <!-- ग्रांड टोटल बटन -->
+        <div class="action-row">
+            <button class="btn-add" onclick="addLandTotal()">➕ लिस्ट में जोड़ें</button>
+            <button class="btn-clear" onclick="clearLandTotal()">🗑️ रीसेट करें</button>
+        </div>
+        <div class="grand-total" id="gtLand">ज़मीन का कुल योग: ₹0.00</div>
     </div>
 
     <!-- ================= 4. किराना / सामान का हिसाब ================= -->
@@ -180,7 +196,14 @@
             <div class="input-group"><label>किलो (Kg):</label><input type="number" id="gKg" placeholder="किलो" oninput="calcGrocery()"></div>
             <div class="input-group"><label>ग्राम (Grams):</label><input type="number" id="gGm" placeholder="ग्राम" oninput="calcGrocery()"></div>
         </div>
-        <div class="result-text" id="resGrocery">सामान की कीमत: ₹0.00</div>
+        <div class="result-text" id="resGrocery">वर्तमान सामान: ₹0.00</div>
+
+        <!-- ग्रांड टोटल बटन -->
+        <div class="action-row">
+            <button class="btn-add" onclick="addGroceryTotal()">➕ लिस्ट में जोड़ें</button>
+            <button class="btn-clear" onclick="clearGroceryTotal()">🗑️ रीसेट करें</button>
+        </div>
+        <div class="grand-total" id="gtGrocery">🛒 सभी सामान का कुल योग: ₹0.00</div>
     </div>
 
     <!-- ================= 5. सोना / आभूषण का हिसाब ================= -->
@@ -194,7 +217,14 @@
             <div class="input-group"><label>ग्राम (Grams):</label><input type="number" id="jGm" placeholder="ग्राम" oninput="calcJewelry()"></div>
             <div class="input-group"><label>मिलीग्राम (Mg):</label><input type="number" id="jMg" placeholder="मिलीग्राम" oninput="calcJewelry()"></div>
         </div>
-        <div class="result-text" id="resJewelry">आभूषण की कीमत: ₹0.00</div>
+        <div class="result-text" id="resJewelry">वर्तमान आभूषण: ₹0.00</div>
+
+        <!-- ग्रांड टोटल बटन -->
+        <div class="action-row">
+            <button class="btn-add" onclick="addJewelryTotal()">➕ लिस्ट में जोड़ें</button>
+            <button class="btn-clear" onclick="clearJewelryTotal()">🗑️ रीसेट करें</button>
+        </div>
+        <div class="grand-total" id="gtJewelry">💍 आभूषण का कुल योग: ₹0.00</div>
     </div>
 
     <!-- ================= 6. USDT / क्रिप्टो कैलकुलेटर ================= -->
@@ -289,6 +319,11 @@
         document.getElementById(selectedId).classList.add('active');
     }
 
+    // ग्रांड टोटल (Grand Total) वेरिएबल्स
+    let currentLandVal = 0, totalLandVal = 0;
+    let currentGroceryVal = 0, totalGroceryVal = 0;
+    let currentJewelryVal = 0, totalJewelryVal = 0;
+
     // 1. बेसिक कैलकुलेटर
     let disp = document.getElementById('display');
     function appendValue(v) { disp.value = (disp.value === '0') ? v : disp.value + v; }
@@ -324,7 +359,18 @@
         else if (rUnit === 'sqm') ratePerBiswa = rate * (2529.3 / 20);
 
         let totalPrice = totalBiswa * ratePerBiswa;
-        document.getElementById('resLandPrice').innerHTML = `कुल कीमत: ₹ ${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+        currentLandVal = totalPrice; // टोटल में जोड़ने के लिए
+        document.getElementById('resLandPrice').innerHTML = `वर्तमान कीमत: ₹ ${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+    }
+    function addLandTotal() {
+        if(currentLandVal > 0) {
+            totalLandVal += currentLandVal;
+            document.getElementById('gtLand').innerHTML = `ज़मीन का कुल योग: ₹${totalLandVal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+        }
+    }
+    function clearLandTotal() {
+        totalLandVal = 0;
+        document.getElementById('gtLand').innerHTML = `ज़मीन का कुल योग: ₹0.00`;
     }
 
     // 4. किराना / सामान का हिसाब
@@ -335,7 +381,18 @@
         
         let totalWeightInKg = kg + (gm / 1000);
         let totalPrice = ratePerKg * totalWeightInKg;
-        document.getElementById('resGrocery').innerHTML = `सामान की कीमत: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+        currentGroceryVal = totalPrice; // टोटल में जोड़ने के लिए
+        document.getElementById('resGrocery').innerHTML = `वर्तमान सामान: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+    }
+    function addGroceryTotal() {
+        if(currentGroceryVal > 0) {
+            totalGroceryVal += currentGroceryVal;
+            document.getElementById('gtGrocery').innerHTML = `🛒 सभी सामान का कुल योग: ₹${totalGroceryVal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+        }
+    }
+    function clearGroceryTotal() {
+        totalGroceryVal = 0;
+        document.getElementById('gtGrocery').innerHTML = `🛒 सभी सामान का कुल योग: ₹0.00`;
     }
 
     // 5. सोना / आभूषण का हिसाब
@@ -347,7 +404,18 @@
         let ratePerGram = rate10g / 10;
         let totalWeightInGrams = gm + (mg / 1000);
         let totalPrice = ratePerGram * totalWeightInGrams;
-        document.getElementById('resJewelry').innerHTML = `आभूषण की कीमत: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+        currentJewelryVal = totalPrice; // टोटल में जोड़ने के लिए
+        document.getElementById('resJewelry').innerHTML = `वर्तमान आभूषण: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+    }
+    function addJewelryTotal() {
+        if(currentJewelryVal > 0) {
+            totalJewelryVal += currentJewelryVal;
+            document.getElementById('gtJewelry').innerHTML = `💍 आभूषण का कुल योग: ₹${totalJewelryVal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+        }
+    }
+    function clearJewelryTotal() {
+        totalJewelryVal = 0;
+        document.getElementById('gtJewelry').innerHTML = `💍 आभूषण का कुल योग: ₹0.00`;
     }
 
     // 6. USDT / क्रिप्टो कैलकुलेटर
