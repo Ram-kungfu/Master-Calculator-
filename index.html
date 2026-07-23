@@ -1,1 +1,333 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>अल्टीमेट मास्टर कैलकुलेटर</title>
+    <style>
+        body {
+            background-color: #0f172a; color: #ffffff; display: flex; flex-direction: column;
+            align-items: center; padding: 15px; margin: 0; font-family: Arial, sans-serif;
+        }
+        h2 { margin: 5px 0 15px 0; color: #38bdf8; text-align: center; font-size: 22px; }
+        
+        .container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; max-width: 1050px; }
+        
+        .box {
+            background-color: #1e293b; padding: 15px; border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5); width: 320px; box-sizing: border-box;
+        }
+        .box h3 { font-size: 15px; color: #facc15; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-top: 0; display: flex; align-items: center; gap: 5px;}
+        
+        /* बेसिक कैलकुलेटर */
+        #display {
+            width: 100%; height: 50px; background-color: #0f172a; color: #ffffff;
+            font-size: 24px; text-align: right; padding: 10px; box-sizing: border-box;
+            border: none; border-radius: 8px; margin-bottom: 12px;
+        }
+        .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .buttons button {
+            padding: 15px; font-size: 18px; cursor: pointer; border: none;
+            border-radius: 8px; background-color: #334155; color: white;
+        }
+        .buttons button:hover { background-color: #475569; }
+        .operator { background-color: #3b82f6 !important; }
+        .equal { background-color: #10b981 !important; grid-column: span 2; }
+        .clear { background-color: #ef4444 !important; }
+
+        /* इनपुट और लेआउट */
+        .input-group { margin-bottom: 10px; }
+        .input-group label { display: block; font-size: 12px; margin-bottom: 4px; color: #94a3b8; }
+        .input-group input, .input-group select {
+            width: 100%; padding: 8px; box-sizing: border-box; background-color: #0f172a;
+            border: 1px solid #475569; color: white; border-radius: 6px; font-size: 14px;
+        }
+        .row { display: flex; gap: 10px; }
+        .row .input-group { flex: 1; }
+        .result-text {
+            font-size: 13.5px; background-color: #0f172a; padding: 10px;
+            border-radius: 6px; margin-top: 5px; color: #4ade80; border-left: 4px solid #4ade80; line-height: 1.4;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .section-title { width: 100%; text-align: center; color: #cbd5e1; font-size: 14px; margin: 20px 0 5px 0; border-bottom: 1px dashed #475569; padding-bottom: 5px;}
+    </style>
+</head>
+<body>
+
+<h2>🚀 अल्टीमेट मास्टर कैलकुलेटर</h2>
+
+<div class="container">
+    
+    <!-- ================= 1. बेसिक कैलकुलेटर ================= -->
+    <div class="box">
+        <h3>🧮 नॉर्मल कैलकुलेटर</h3>
+        <input type="text" id="display" readonly value="0">
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button onclick="appendValue('(')">(</button>
+            <button onclick="appendValue(')')">)</button>
+            <button class="operator" onclick="appendValue('/')">÷</button>
+            
+            <button onclick="appendValue('7')">7</button>
+            <button onclick="appendValue('8')">8</button>
+            <button onclick="appendValue('9')">9</button>
+            <button class="operator" onclick="appendValue('*')">×</button>
+            
+            <button onclick="appendValue('4')">4</button>
+            <button onclick="appendValue('5')">5</button>
+            <button onclick="appendValue('6')">6</button>
+            <button class="operator" onclick="appendValue('-')">-</button>
+            
+            <button onclick="appendValue('1')">1</button>
+            <button onclick="appendValue('2')">2</button>
+            <button onclick="appendValue('3')">3</button>
+            <button class="operator" onclick="appendValue('+')">+</button>
+            
+            <button onclick="appendValue('0')">0</button>
+            <button onclick="appendValue('.')">.</button>
+            <button class="equal" onclick="calculateResult()">=</button>
+        </div>
+    </div>
+
+    <!-- ================= 2. ज़मीन और खेती ================= -->
+    <div class="box">
+        <!-- पुराना वाला एरिया कनवर्टर (जो छूट गया था) -->
+        <h3>🌾 खेत/ज़मीन क्षेत्रफल कनवर्टर</h3>
+        <div class="input-group">
+            <label>वर्ग मीटर (Sq Meters) दर्ज करें:</label>
+            <input type="number" id="sqM" placeholder="जैसे: 2000" oninput="calcArea()">
+        </div>
+        <div class="result-text" id="resArea" style="margin-bottom: 15px;">फीट: 0.00 sq ft<br>एकड़: 0.0000 | हेक्टेयर: 0.0000</div>
+
+        <!-- बीघा/बिस्वा वाला ऑटोमैटिक दाम कैलकुलेटर -->
+        <h3 style="color: #4ade80;">💰 ज़मीन की कुल कीमत (ऑटोमैटिक)</h3>
+        <div class="row">
+            <div class="input-group">
+                <label>ज़मीन (माप):</label>
+                <input type="number" id="landAmount" placeholder="उदा. 0.36" oninput="calcLandPrice()">
+            </div>
+            <div class="input-group">
+                <label>इकाई:</label>
+                <select id="landUnit" onchange="calcLandPrice()">
+                    <option value="biswa">बिस्वा</option>
+                    <option value="bigha">बीघा</option>
+                    <option value="hectare">हेक्टेयर</option>
+                    <option value="sqm">वर्ग मीटर</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-group">
+                <label>रेट (₹):</label>
+                <input type="number" id="landRate" placeholder="उदा. 5000" oninput="calcLandPrice()">
+            </div>
+            <div class="input-group">
+                <label>रेट का हिसाब:</label>
+                <select id="rateUnit" onchange="calcLandPrice()">
+                    <option value="bigha">प्रति बीघा</option>
+                    <option value="biswa">प्रति बिस्वा</option>
+                    <option value="hectare">प्रति हेक्टेयर</option>
+                    <option value="sqm">प्रति वर्ग मीटर</option>
+                </select>
+            </div>
+        </div>
+        <div class="result-text" id="resLandPrice">कुल कीमत: ₹0</div>
+    </div>
+
+    <!-- ================= 3. रोज़मर्रा का हिसाब (नया) ================= -->
+    <div class="box">
+        <h3>🛒 किराना / सामान का हिसाब</h3>
+        <div class="input-group">
+            <label>1 किलो का दाम (₹):</label>
+            <input type="number" id="gRate" placeholder="जैसे: 150" oninput="calcGrocery()">
+        </div>
+        <div class="row">
+            <div class="input-group"><label>कितना लिया (Kg):</label><input type="number" id="gKg" placeholder="किलो" oninput="calcGrocery()"></div>
+            <div class="input-group"><label>ग्राम (Grams):</label><input type="number" id="gGm" placeholder="ग्राम (उदा. 250)" oninput="calcGrocery()"></div>
+        </div>
+        <div class="result-text" id="resGrocery" style="margin-bottom: 15px;">सामान की कीमत: ₹0.00</div>
+
+        <h3>💍 सोना / आभूषण का हिसाब</h3>
+        <div class="input-group">
+            <label>आज का सोने का रेट (प्रति 10 ग्राम):</label>
+            <input type="number" id="jRate" placeholder="जैसे: 72000" oninput="calcJewelry()">
+        </div>
+        <div class="row">
+            <div class="input-group"><label>ग्राम (Grams):</label><input type="number" id="jGm" placeholder="ग्राम" oninput="calcJewelry()"></div>
+            <div class="input-group"><label>मिलीग्राम (Mg):</label><input type="number" id="jMg" placeholder="मिलीग्राम" oninput="calcJewelry()"></div>
+        </div>
+        <div class="result-text" id="resJewelry">आभूषण की कीमत: ₹0.00</div>
+    </div>
+
+    <!-- ================= 4. फाइनेंस और बैंक ================= -->
+    <div class="box">
+        <h3>🏦 बैंक ब्याज (साधारण / फिक्स्ड डिपॉजिट)</h3>
+        <div class="row">
+            <div class="input-group"><label>मूलधन (₹):</label><input type="number" id="bAmt" oninput="calcBank()"></div>
+            <div class="input-group"><label>ब्याज(%):</label><input type="number" id="bRt" oninput="calcBank()"></div>
+            <div class="input-group"><label>साल:</label><input type="number" id="bYr" oninput="calcBank()"></div>
+        </div>
+        <div class="result-text" id="resBank" style="margin-bottom: 15px;">ब्याज: ₹0 | कुल मिलेगा: ₹0</div>
+
+        <h3>📈 SIP कैलकुलेटर (म्यूचुअल फंड)</h3>
+        <div class="row">
+            <div class="input-group"><label>मासिक (₹):</label><input type="number" id="sAmt" oninput="calcSIP()"></div>
+            <div class="input-group"><label>साल:</label><input type="number" id="sYr" oninput="calcSIP()"></div>
+            <div class="input-group"><label>ब्याज(%):</label><input type="number" id="sRt" oninput="calcSIP()"></div>
+        </div>
+        <div class="result-text" id="resSIP" style="margin-bottom: 15px;">कुल वैल्यू यहाँ दिखेगी</div>
+
+        <h3>💳 लोन EMI कैलकुलेटर</h3>
+        <div class="row">
+            <div class="input-group"><label>लोन (₹):</label><input type="number" id="lAmt" oninput="calcEMI()"></div>
+            <div class="input-group"><label>साल:</label><input type="number" id="lYr" oninput="calcEMI()"></div>
+            <div class="input-group"><label>ब्याज(%):</label><input type="number" id="lRt" oninput="calcEMI()"></div>
+        </div>
+        <div class="result-text" id="resEMI">मासिक EMI: ₹0.00</div>
+    </div>
+
+    <!-- ================= 5. अन्य कन्वर्शन ================= -->
+    <div class="box">
+        <h3>🔄 अन्य ज़रूरी कन्वर्शन</h3>
+        <div class="grid-2">
+            <div>
+                <div class="input-group"><label>🌡️ सेल्सियस (°C):</label><input type="number" id="tempC" placeholder="°C" oninput="calcTemp()"></div>
+                <div class="result-text" id="resTemp">°F</div>
+            </div>
+            <div>
+                <div class="input-group"><label>🛣️ किलोमीटर (Km):</label><input type="number" id="distK" placeholder="Km" oninput="calcDist()"></div>
+                <div class="result-text" id="resDist">मील (Miles)</div>
+            </div>
+            <div>
+                <div class="input-group"><label>⚖️ किलोग्राम (Kg):</label><input type="number" id="wtK" placeholder="Kg" oninput="calcWt()"></div>
+                <div class="result-text" id="resWt">पाउंड (Lbs)</div>
+            </div>
+            <div>
+                <div class="input-group"><label>💾 डेटा (MB):</label><input type="number" id="dataM" placeholder="MB" oninput="calcData()"></div>
+                <div class="result-text" id="resData">जीबी (GB)</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // 1. बेसिक कैलकुलेटर
+    let disp = document.getElementById('display');
+    function appendValue(v) { disp.value = (disp.value === '0') ? v : disp.value + v; }
+    function clearDisplay() { disp.value = '0'; }
+    function calculateResult() { try { disp.value = eval(disp.value); } catch(e) { disp.value = 'Error'; } }
+
+    // 2. खेत/ज़मीन क्षेत्रफल कनवर्टर (फोटो वाला)
+    function calcArea() {
+        let m = parseFloat(document.getElementById('sqM').value) || 0;
+        let ft = m * 10.7639;
+        let acre = m / 4046.86;
+        let hec = m / 10000;
+        document.getElementById('resArea').innerHTML = `फीट: ${ft.toFixed(2)} sq ft<br>एकड़: ${acre.toFixed(4)} | हेक्टेयर: ${hec.toFixed(4)}`;
+    }
+
+    // 3. ज़मीन की कुल कीमत
+    function calcLandPrice() {
+        let land = parseFloat(document.getElementById('landAmount').value) || 0;
+        let lUnit = document.getElementById('landUnit').value;
+        let rate = parseFloat(document.getElementById('landRate').value) || 0;
+        let rUnit = document.getElementById('rateUnit').value;
+
+        // सभी ज़मीन को मानक 'बिस्वा' में बदलते हैं (1 बीघा = 20 बिस्वा, 1 हेक्टेयर = 79.06 बिस्वा)
+        let totalBiswa = 0;
+        if (lUnit === 'biswa') totalBiswa = land;
+        else if (lUnit === 'bigha') totalBiswa = land * 20;
+        else if (lUnit === 'hectare') totalBiswa = land * 79.06;
+        else if (lUnit === 'sqm') totalBiswa = (land / 2529.3) * 20;
+
+        // रेट को प्रति 'बिस्वा' में बदलते हैं
+        let ratePerBiswa = 0;
+        if (rUnit === 'biswa') ratePerBiswa = rate;
+        else if (rUnit === 'bigha') ratePerBiswa = rate / 20;
+        else if (rUnit === 'hectare') ratePerBiswa = rate / 79.06;
+        else if (rUnit === 'sqm') ratePerBiswa = rate * (2529.3 / 20);
+
+        let totalPrice = totalBiswa * ratePerBiswa;
+        document.getElementById('resLandPrice').innerHTML = `कुल कीमत: ₹ ${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+    }
+
+    // 4. किराना / सामान का हिसाब (नया)
+    function calcGrocery() {
+        let ratePerKg = parseFloat(document.getElementById('gRate').value) || 0;
+        let kg = parseFloat(document.getElementById('gKg').value) || 0;
+        let gm = parseFloat(document.getElementById('gGm').value) || 0;
+        
+        let totalWeightInKg = kg + (gm / 1000);
+        let totalPrice = ratePerKg * totalWeightInKg;
+        document.getElementById('resGrocery').innerHTML = `सामान की कीमत: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+    }
+
+    // 5. सोना / आभूषण का हिसाब (नया)
+    function calcJewelry() {
+        let rate10g = parseFloat(document.getElementById('jRate').value) || 0;
+        let gm = parseFloat(document.getElementById('jGm').value) || 0;
+        let mg = parseFloat(document.getElementById('jMg').value) || 0;
+        
+        let ratePerGram = rate10g / 10;
+        let totalWeightInGrams = gm + (mg / 1000);
+        let totalPrice = ratePerGram * totalWeightInGrams;
+        document.getElementById('resJewelry').innerHTML = `आभूषण की कीमत: ₹${totalPrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+    }
+
+    // 6. बैंक ब्याज (नया)
+    function calcBank() {
+        let p = parseFloat(document.getElementById('bAmt').value) || 0;
+        let r = parseFloat(document.getElementById('bRt').value) || 0;
+        let t = parseFloat(document.getElementById('bYr').value) || 0;
+        let interest = (p * r * t) / 100;
+        document.getElementById('resBank').innerHTML = `ब्याज: ₹${interest.toLocaleString('en-IN')} | कुल मिलेगा: ₹${(p + interest).toLocaleString('en-IN')}`;
+    }
+
+    // 7. SIP कैलकुलेटर
+    function calcSIP() {
+        let p = parseFloat(document.getElementById('sAmt').value) || 0;
+        let y = parseFloat(document.getElementById('sYr').value) || 0;
+        let r = parseFloat(document.getElementById('sRt').value) || 0;
+        if(p===0 || y===0 || r===0) { document.getElementById('resSIP').innerHTML = `कुल वैल्यू यहाँ दिखेगी`; return; }
+        
+        let m = y * 12, rate = r / 12 / 100;
+        let fv = p * (Math.pow(1 + rate, m) - 1) / rate * (1 + rate);
+        document.getElementById('resSIP').innerHTML = `जमा: ₹${(p*m).toLocaleString('en-IN')} | मिलेगा: ₹${fv.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+    }
+
+    // 8. लोन EMI
+    function calcEMI() {
+        let p = parseFloat(document.getElementById('lAmt').value) || 0;
+        let y = parseFloat(document.getElementById('lYr').value) || 0;
+        let r = parseFloat(document.getElementById('lRt').value) || 0;
+        if(p===0 || y===0 || r===0) { document.getElementById('resEMI').innerHTML = `मासिक EMI: ₹0.00`; return; }
+
+        let mRate = r / 12 / 100, mos = y * 12;
+        let emi = (p * mRate * Math.pow(1 + mRate, mos)) / (Math.pow(1 + mRate, mos) - 1);
+        document.getElementById('resEMI').innerHTML = `EMI: ₹${emi.toLocaleString('en-IN', { maximumFractionDigits: 2 })} | कुल: ₹${(emi * mos).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+    }
+
+    // 9. अन्य कन्वर्शन
+    function calcTemp() {
+        let c = parseFloat(document.getElementById('tempC').value) || 0;
+        document.getElementById('resTemp').innerHTML = `${((c * 9/5) + 32).toFixed(2)} °F`;
+    }
+    function calcDist() {
+        let k = parseFloat(document.getElementById('distK').value) || 0;
+        document.getElementById('resDist').innerHTML = `${(k * 0.621371).toFixed(2)} मील`;
+    }
+    function calcWt() {
+        let k = parseFloat(document.getElementById('wtK').value) || 0;
+        document.getElementById('resWt').innerHTML = `${(k * 2.20462).toFixed(2)} पाउंड`;
+    }
+    function calcData() {
+        let m = parseFloat(document.getElementById('dataM').value) || 0;
+        document.getElementById('resData').innerHTML = `${(m / 1024).toFixed(4)} GB`;
+    }
+</script>
+
+</body>
+</html>
 
