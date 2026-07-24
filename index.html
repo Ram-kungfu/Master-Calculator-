@@ -95,6 +95,7 @@
         <label>👇 यहाँ से और अन्य कैलकुलेटर चुनें:</label>
         <select id="calcSelector" onchange="switchCalculator()">
             <option value="box-normal">🧮 नॉर्मल व साइंटिफिक कैलकुलेटर</option>
+            <option value="box-discount">🏷️ डिस्काउंट (Discount) कैलकुलेटर</option>
             <option value="box-land-area">🌾 खेत/ज़मीन क्षेत्रफल कनवर्टर</option>
             <option value="box-land-price">💰 बीघा/बिस्वा ज़मीन की कीमत</option>
             <option value="box-grocery">🛒 किराना / सामान का हिसाब</option>
@@ -155,6 +156,26 @@
             <button onclick="appendValue('.')">.</button>
             <button class="equal" onclick="calculateResult()">=</button>
         </div>
+    </div>
+
+    <!-- ================= डिस्काउंट कैलकुलेटर ================= -->
+    <div id="box-discount" class="box">
+        <h3>🏷️ डिस्काउंट (Discount) कैलकुलेटर</h3>
+        <div class="input-group">
+            <label>मूल कीमत (Original Price - ₹):</label>
+            <input type="number" id="discPrice" placeholder="उदा. 100" oninput="calcDiscount()">
+        </div>
+        <div class="row">
+            <div class="input-group">
+                <label>डिस्काउंट (%):</label>
+                <input type="number" id="discPct" placeholder="उदा. 20" oninput="calcDiscount()">
+            </div>
+            <div class="input-group">
+                <label>सेल्स टैक्स (% - Optional):</label>
+                <input type="number" id="discTax" placeholder="उदा. 0" oninput="calcDiscount()">
+            </div>
+        </div>
+        <div class="result-text" id="resDiscount">अंतिम कीमत: ₹0.00<br>बचत (Save): ₹0.00 | टैक्स: ₹0.00</div>
     </div>
 
     <!-- ================= 2. खेत क्षेत्रफल कनवर्टर ================= -->
@@ -501,6 +522,23 @@
                 disp.value = '-' + disp.value;
             }
         }
+    }
+
+    // डिस्काउंट कैलकुलेटर फंक्शन
+    function calcDiscount() {
+        let price = parseFloat(document.getElementById('discPrice').value) || 0;
+        let discount = parseFloat(document.getElementById('discPct').value) || 0;
+        let tax = parseFloat(document.getElementById('discTax').value) || 0;
+
+        let savings = price * (discount / 100);
+        let discountedPrice = price - savings;
+        let taxAmount = discountedPrice * (tax / 100);
+        let finalPrice = discountedPrice + taxAmount;
+
+        document.getElementById('resDiscount').innerHTML = 
+            `अंतिम कीमत: <b>₹${finalPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</b><br>` +
+            `बचत (Save): ₹${savings.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} | ` +
+            `टैक्स: ₹${taxAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
     // 2. खेत क्षेत्रफल कनवर्टर
