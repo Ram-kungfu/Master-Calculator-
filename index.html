@@ -312,13 +312,16 @@
         <div class="result-text" id="resUSDT">परिणाम यहाँ दिखेगा</div>
     </div>
 
-    <!-- ================= 7. बैंक ब्याज ================= -->
+    <!-- ================= 7. बैंक ब्याज (FD / साधारण व चक्रवृद्धि) ================= -->
     <div id="box-bank" class="box">
         <h3>🏦 बैंक ब्याज (FD / साधारण व चक्रवृद्धि)</h3>
         <div class="row">
             <div class="input-group"><label>मूलधन (₹):</label><input type="number" id="bAmt" oninput="calcBank()"></div>
             <div class="input-group"><label>ब्याज(%):</label><input type="number" id="bRt" oninput="calcBank()"></div>
-            <div class="input-group"><label>साल:</label><input type="number" id="bYr" oninput="calcBank()"></div>
+        </div>
+        <div class="row">
+            <div class="input-group"><label>साल:</label><input type="number" id="bYr" oninput="calcBank()" placeholder="0"></div>
+            <div class="input-group"><label>महीने:</label><input type="number" id="bMo" oninput="calcBank()" placeholder="0"></div>
         </div>
         <div class="input-group">
             <label>चक्रवृद्धि चक्र (Compounding):</label>
@@ -326,12 +329,10 @@
                 <option value="1">वार्षिक (Yearly)</option>
                 <option value="2">छमाही (Half-Yearly)</option>
                 <option value="4">तिमाही (Quarterly)</option>
+                <option value="12">मासिक (Monthly)</option>
             </select>
         </div>
-        <div class="result-text" id="resBank">
-            <b>साधारण ब्याज:</b> ₹0 | कुल: ₹0<br>
-            <b>चक्रवृद्धि ब्याज:</b> ₹0 | कुल: ₹0
-        </div>
+        <div class="result-text" id="resBank">साधारण ब्याज: ₹0 | कुल: ₹0<br>चक्रवृद्धि ब्याज: ₹0 | कुल: ₹0</div>
     </div>
 
     <!-- ================= 8. SIP कैलकुलेटर ================= -->
@@ -692,24 +693,34 @@
         else if (usdtField) convertUsdtToInr();
     }
 
-    // 7. बैंक ब्याज (साधारण व चक्रवृद्धि)
+    // 7. बैंक ब्याज (FD / साधारण व चक्रवृद्धि)
     function calcBank() {
         let p = parseFloat(document.getElementById('bAmt').value) || 0;
         let r = parseFloat(document.getElementById('bRt').value) || 0;
-        let t = parseFloat(document.getElementById('bYr').value) || 0;
-        let n = parseInt(document.getElementById('bComp').value) || 1;
+        let y = parseFloat(document.getElementById('bYr').value) || 0;
+        let m = parseFloat(document.getElementById('bMo').value) || 0;
+        let n = parseFloat(document.getElementById('bComp').value) || 1;
 
-        // साधारण ब्याज (Simple Interest)
-        let simpleInterest = (p * r * t) / 100;
-        let totalSimple = p + simpleInterest;
+        // कुल समय को सालों में बदलना
+        let t = y + (m / 12);
+        
+        if (p === 0 || r === 0 || t === 0) {
+            document.getElementById('resBank').innerHTML = `साधारण ब्याज: ₹0 | कुल: ₹0<br>चक्रवृद्धि ब्याज: ₹0 | कुल: ₹0`;
+            return;
+        }
 
-        // चक्रवृद्धि ब्याज (Compound Interest)
-        let totalCompound = p * Math.pow((1 + (r / (100 * n))), (n * t));
-        let compoundInterest = totalCompound - p;
+        // साधारण ब्याज का फॉर्मूला
+        let si = (p * r * t) / 100;
+        let totalSiAmount = p + si;
 
+        // चक्रवृद्धि ब्याज का फॉर्मूला (A = P(1 + r/n)^(nt))
+        let ciAmount = p * Math.pow((1 + (r / (100 * n))), n * t);
+        let ci = ciAmount - p;
+
+        // रिजल्ट दिखाना
         document.getElementById('resBank').innerHTML = 
-            `<b>साधारण ब्याज:</b> ₹${simpleInterest.toLocaleString('en-IN', { maximumFractionDigits: 2 })} | कुल: ₹${totalSimple.toLocaleString('en-IN', { maximumFractionDigits: 2 })}<br>` +
-            `<b>चक्रवृद्धि ब्याज:</b> ₹${compoundInterest.toLocaleString('en-IN', { maximumFractionDigits: 2 })} | कुल: ₹${totalCompound.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+            `साधारण ब्याज: ₹${si.toLocaleString('en-IN', { maximumFractionDigits: 2 })} | कुल: ₹${totalSiAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}<br>` +
+            `चक्रवृद्धि ब्याज: ₹${ci.toLocaleString('en-IN', { maximumFractionDigits: 2 })} | कुल: ₹${ciAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
     }
 
     // 8. SIP कैलकुलेटर
