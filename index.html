@@ -102,7 +102,7 @@
             <option value="box-liter">⛽ लीटर / तरल पदार्थ का हिसाब</option>
             <option value="box-jewelry">💍 सोना / आभूषण का हिसाब</option>
             <option value="box-usdt">💱 USDT / क्रिप्टो कैलकुलेटर</option>
-            <option value="box-bank">🏦 बैंक ब्याज (FD / साधारण)</option>
+            <option value="box-bank">🏦 बैंक ब्याज (FD / साधारण व चक्रवृद्धि)</option>
             <option value="box-sip">📈 SIP कैलकुलेटर</option>
             <option value="box-emi">💳 लोन EMI कैलकुलेटर</option>
             <option value="box-wood-cloth">🪵 लकड़ी, कपड़ा व निर्माण माप (इंच/फीट)</option>
@@ -314,13 +314,24 @@
 
     <!-- ================= 7. बैंक ब्याज ================= -->
     <div id="box-bank" class="box">
-        <h3>🏦 बैंक ब्याज (FD / साधारण)</h3>
+        <h3>🏦 बैंक ब्याज (FD / साधारण व चक्रवृद्धि)</h3>
         <div class="row">
             <div class="input-group"><label>मूलधन (₹):</label><input type="number" id="bAmt" oninput="calcBank()"></div>
             <div class="input-group"><label>ब्याज(%):</label><input type="number" id="bRt" oninput="calcBank()"></div>
             <div class="input-group"><label>साल:</label><input type="number" id="bYr" oninput="calcBank()"></div>
         </div>
-        <div class="result-text" id="resBank">ब्याज: ₹0 | कुल मिलेगा: ₹0</div>
+        <div class="input-group">
+            <label>चक्रवृद्धि चक्र (Compounding):</label>
+            <select id="bComp" onchange="calcBank()">
+                <option value="1">वार्षिक (Yearly)</option>
+                <option value="2">छमाही (Half-Yearly)</option>
+                <option value="4">तिमाही (Quarterly)</option>
+            </select>
+        </div>
+        <div class="result-text" id="resBank">
+            <b>साधारण ब्याज:</b> ₹0 | कुल: ₹0<br>
+            <b>चक्रवृद्धि ब्याज:</b> ₹0 | कुल: ₹0
+        </div>
     </div>
 
     <!-- ================= 8. SIP कैलकुलेटर ================= -->
@@ -681,13 +692,24 @@
         else if (usdtField) convertUsdtToInr();
     }
 
-    // 7. बैंक ब्याज
+    // 7. बैंक ब्याज (साधारण व चक्रवृद्धि)
     function calcBank() {
         let p = parseFloat(document.getElementById('bAmt').value) || 0;
         let r = parseFloat(document.getElementById('bRt').value) || 0;
         let t = parseFloat(document.getElementById('bYr').value) || 0;
-        let interest = (p * r * t) / 100;
-        document.getElementById('resBank').innerHTML = `ब्याज: ₹${interest.toLocaleString('en-IN')} | कुल मिलेगा: ₹${(p + interest).toLocaleString('en-IN')}`;
+        let n = parseInt(document.getElementById('bComp').value) || 1;
+
+        // साधारण ब्याज (Simple Interest)
+        let simpleInterest = (p * r * t) / 100;
+        let totalSimple = p + simpleInterest;
+
+        // चक्रवृद्धि ब्याज (Compound Interest)
+        let totalCompound = p * Math.pow((1 + (r / (100 * n))), (n * t));
+        let compoundInterest = totalCompound - p;
+
+        document.getElementById('resBank').innerHTML = 
+            `<b>साधारण ब्याज:</b> ₹${simpleInterest.toLocaleString('en-IN', { maximumFractionDigits: 2 })} | कुल: ₹${totalSimple.toLocaleString('en-IN', { maximumFractionDigits: 2 })}<br>` +
+            `<b>चक्रवृद्धि ब्याज:</b> ₹${compoundInterest.toLocaleString('en-IN', { maximumFractionDigits: 2 })} | कुल: ₹${totalCompound.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
     }
 
     // 8. SIP कैलकुलेटर
