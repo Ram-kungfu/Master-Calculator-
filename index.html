@@ -95,6 +95,7 @@
         <label>👇 यहाँ से और अन्य कैलकुलेटर चुनें:</label>
         <select id="calcSelector" onchange="switchCalculator()">
             <option value="box-normal">🧮 नॉर्मल व साइंटिफिक कैलकुलेटर</option>
+            <option value="box-village">🏡 गांव-देहात का ब्याज (मासिक / सैकड़ा)</option>
             <option value="box-discount">🏷️ डिस्काउंट (Discount) कैलकुलेटर</option>
             <option value="box-land-area">🌾 खेत/ज़मीन क्षेत्रफल कनवर्टर</option>
             <option value="box-land-price">💰 बीघा/बिस्वा ज़मीन की कीमत</option>
@@ -156,6 +157,32 @@
             <button onclick="appendValue('.')">.</button>
             <button class="equal" onclick="calculateResult()">=</button>
         </div>
+    </div>
+
+    <!-- ================= NEW. गांव-देहात का ब्याज (मासिक/सैकड़ा) ================= -->
+    <div id="box-village" class="box">
+        <h3 style="color: #4ade80;">🏡 गांव-देहात का ब्याज (मासिक / सैकड़ा)</h3>
+        <div class="row">
+            <div class="input-group">
+                <label>मूलधन (₹):</label>
+                <input type="number" id="vAmt" placeholder="जैसे: 50000" oninput="calcVillage()">
+            </div>
+            <div class="input-group">
+                <label>ब्याज (% प्रति माह):</label>
+                <input type="number" id="vRt" placeholder="जैसे: 10" oninput="calcVillage()">
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-group">
+                <label>महीने:</label>
+                <input type="number" id="vMo" placeholder="0" oninput="calcVillage()">
+            </div>
+            <div class="input-group">
+                <label>दिन (Days):</label>
+                <input type="number" id="vDy" placeholder="0" oninput="calcVillage()">
+            </div>
+        </div>
+        <div class="result-text" id="resVillage">ब्याज: ₹0.00 <br>कुल राशि: ₹0.00</div>
     </div>
 
     <!-- ================= डिस्काउंट कैलकुलेटर ================= -->
@@ -357,7 +384,7 @@
         <div class="result-text" id="resEMI">मासिक EMI: ₹0.00</div>
     </div>
 
-    <!-- ================= NEW. लकड़ी, कपड़ा व निर्माण माप (इंच/फीट) ================= -->
+    <!-- ================= लकड़ी, कपड़ा व निर्माण माप (इंच/फीट) ================= -->
     <div id="box-wood-cloth" class="box">
         <h3>🪵 लकड़ी, कपड़ा व निर्माण माप</h3>
         <div class="row">
@@ -534,6 +561,30 @@
                 disp.value = '-' + disp.value;
             }
         }
+    }
+    
+    // NEW. गांव-देहात का ब्याज (मासिक/सैकड़ा) फंक्शन
+    function calcVillage() {
+        let p = parseFloat(document.getElementById('vAmt').value) || 0;
+        let r = parseFloat(document.getElementById('vRt').value) || 0; // प्रति माह का ब्याज दर
+        let m = parseFloat(document.getElementById('vMo').value) || 0; // महीने
+        let d = parseFloat(document.getElementById('vDy').value) || 0; // दिन
+
+        // कुल समय को महीनों में बदलना (30 दिन = 1 महीना मानकर)
+        let totalMonths = m + (d / 30);
+        
+        if (p === 0 || r === 0 || totalMonths === 0) {
+            document.getElementById('resVillage').innerHTML = `ब्याज: ₹0.00 <br>कुल राशि: ₹0.00`;
+            return;
+        }
+
+        // साधारण ब्याज का फॉर्मूला = मूलधन x दर x समय / 100
+        let interest = (p * r * totalMonths) / 100;
+        let totalAmount = p + interest;
+
+        document.getElementById('resVillage').innerHTML = 
+            `ब्याज: <b>₹${interest.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</b> <br>` +
+            `कुल राशि: <b>₹${totalAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</b>`;
     }
 
     // डिस्काउंट कैलकुलेटर फंक्शन
@@ -747,7 +798,7 @@
         document.getElementById('resEMI').innerHTML = `EMI: ₹${emi.toLocaleString('en-IN', { maximumFractionDigits: 2 })} | कुल: ₹${(emi * mos).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
     }
 
-    // NEW. लकड़ी, कपड़ा व निर्माण माप (इंच/फीट)
+    // लकड़ी, कपड़ा व निर्माण माप (इंच/फीट)
     function calcWoodCloth() {
         let lFt = parseFloat(document.getElementById('wcLengthFt').value) || 0;
         let lIn = parseFloat(document.getElementById('wcLengthIn').value) || 0;
